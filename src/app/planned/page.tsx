@@ -3,26 +3,27 @@ import { ReactElement, useContext, useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 
 import { PiDotsThreeOutline } from "react-icons/pi";
-import "./globals.css";
-import "../components/form/login.modules.css";
-import { FormatDate } from "@/components/time";
-import ShowTodo from "@/components/Dashboard/showTodo";
-import Todo from "@/components/Dashboard/Todo";
+import "@/app/globals.css";
+import "@/components/planned/dashboard.modules.css";
 
-export default function Home(): ReactElement<Element> {
+import ShowTodo from "@/components/planned/showTodo";
+import Todo from "@/components/planned/Todo";
+
+import { BsLayoutTextWindowReverse } from "react-icons/bs";
+
+export default function PlannedPage(): ReactElement<Element> {
   const [clicked, setClicked] = useState(false);
   const [parentBgcolor, setParentBgColor] = useState("");
   const [information, setInfo] = useState([]);
   const [todo, setTodo] = useState({
     text: "",
-    day: true,
+    day: false,
     important: false,
-    planned: false,
+    planned: true,
     completed: false,
     all: true,
     task: true,
   });
-
   const [allTasks, setAllTasks] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   async function submit(event: any) {
@@ -43,7 +44,7 @@ export default function Home(): ReactElement<Element> {
             text: "",
             day: true,
             important: false,
-            planned: false,
+            planned: true,
             completed: false,
             all: true,
             task: true,
@@ -68,10 +69,9 @@ export default function Home(): ReactElement<Element> {
         },
       });
       let d = await res.json();
-      let filterData = d.data.filter((item: any): any => item.day);
+      let filterData = d.data.filter((item: any): any => item.planned);
       setInfo(filterData);
       setAllTasks(filterData);
-      console.log(filterData);
     } catch (error) {}
   }
   useEffect(() => {
@@ -79,7 +79,7 @@ export default function Home(): ReactElement<Element> {
   }, []);
 
   useEffect(() => {
-    const savedBgColor: any = localStorage.getItem("parentBgcolor");
+    const savedBgColor: any = localStorage.getItem("plannedBgcolor");
     if (savedBgColor) {
       setParentBgColor(savedBgColor);
     }
@@ -111,23 +111,22 @@ export default function Home(): ReactElement<Element> {
     };
   }, [clicked]);
 
-  function search(event: any) {
-    event.preventDefault();
-    if (searchTerm) {
-      const filteredTasks = allTasks.filter((task: any) =>
-        task.text.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setInfo(filteredTasks);
-    } else {
-      setInfo(allTasks);
-    }
-  }
-
   function handleColorClick(event: any) {
     const selectedColor: any = event.target.style.backgroundColor;
     setParentBgColor(selectedColor);
-    localStorage.setItem("parentBgcolor", selectedColor);
+    localStorage.setItem("plannedBgcolor", selectedColor);
   }
+
+  function search(event: any) {
+    event?.preventDefault();
+    if (searchTerm) {
+      const filterdTasks = allTasks.filter((task: any) =>
+        task.text.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setInfo(filterdTasks);
+    } else [setInfo(allTasks)];
+  }
+
   function handleSearchChange(event: any) {
     setSearchTerm(event.target.value);
   }
@@ -137,11 +136,11 @@ export default function Home(): ReactElement<Element> {
       style={{ backgroundColor: parentBgcolor }}
     >
       <div className="flex  justify-between items-center m-2 relative ">
-        <div className="">
-          <h1 className=" date text-[2rem]">My Day</h1>
-          <p className="date font text-[1.2rem] font-[500]">{`${FormatDate(
-            new Date()
-          )}`}</p>
+        <div className="flex  items-center">
+          <p className="date font text-[1.5rem] font-[500]">
+            <BsLayoutTextWindowReverse className="mr-3" />
+          </p>
+          <h1 className=" date text-[2rem]">Planned</h1>
         </div>
 
         <div className="flex justify-center items-center ">
@@ -158,7 +157,7 @@ export default function Home(): ReactElement<Element> {
             </form>
           </div>
 
-          <div className="threedot text-[1.5rem] cursor-pointer p-2 border rounded-md  ml-4">
+          <div className="threedot text-[1.5rem] cursor-pointer p-2 border rounded-md ml-4">
             <div>
               <PiDotsThreeOutline />
             </div>

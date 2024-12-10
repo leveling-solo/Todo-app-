@@ -1,0 +1,39 @@
+@font-face {
+    font-family: day;
+    src: url("../../app/fonts/OriginTech\ personal\ use.otf");
+}
+
+.credentials-name {
+    font-family: "Sedan SC";
+}
+
+.form {
+    font-family: "Dosis";
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.form::placeholder {
+    color: rgb(142, 159, 205);
+}
+
+.credentials-heading {
+    font-family: Montserrat;
+    font-weight: 500;
+    font-size: 1.3rem;
+}
+
+.or {
+    font-family: nav;
+}
+
+.oauth {
+    font-family: "Sedan SC";
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+@font-face {
+    font-family: nav;
+    src: url("../../app/fonts/Coalition_v2..ttf");
+}

@@ -3,26 +3,27 @@ import { ReactElement, useContext, useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 
 import { PiDotsThreeOutline } from "react-icons/pi";
-import "./globals.css";
-import "../components/form/login.modules.css";
-import { FormatDate } from "@/components/time";
-import ShowTodo from "@/components/Dashboard/showTodo";
-import Todo from "@/components/Dashboard/Todo";
+import { PiInfinityBold } from "react-icons/pi";
 
-export default function Home(): ReactElement<Element> {
+import "@/app/globals.css";
+import "@/components/planned/dashboard.modules.css";
+
+import ShowTodo from "@/components/all/showTodo";
+import Todo from "@/components/all/Todo";
+
+export default function AllPage(): ReactElement<Element> {
   const [clicked, setClicked] = useState(false);
   const [parentBgcolor, setParentBgColor] = useState("");
   const [information, setInfo] = useState([]);
   const [todo, setTodo] = useState({
     text: "",
-    day: true,
+    day: false,
     important: false,
     planned: false,
     completed: false,
     all: true,
     task: true,
   });
-
   const [allTasks, setAllTasks] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   async function submit(event: any) {
@@ -36,22 +37,16 @@ export default function Home(): ReactElement<Element> {
         body: JSON.stringify(todo),
       });
       if (response.ok) {
-        const newTask = await response.json();
-        if (newTask) {
-          console.log("Task submitted successfully");
-          setTodo({
-            text: "",
-            day: true,
-            important: false,
-            planned: false,
-            completed: false,
-            all: true,
-            task: true,
-          });
-          await getingData();
-        } else {
-          console.error("Invalid task data received", newTask);
-        }
+        setTodo({
+          text: "",
+          day: false,
+          important: false,
+          planned: false,
+          completed: false,
+          all: true,
+          task: true,
+        });
+        await getingData();
       } else {
         console.error("Failed to submit task");
       }
@@ -68,10 +63,9 @@ export default function Home(): ReactElement<Element> {
         },
       });
       let d = await res.json();
-      let filterData = d.data.filter((item: any): any => item.day);
+      let filterData = d.data.filter((item: any): any => item.all);
       setInfo(filterData);
       setAllTasks(filterData);
-      console.log(filterData);
     } catch (error) {}
   }
   useEffect(() => {
@@ -79,7 +73,7 @@ export default function Home(): ReactElement<Element> {
   }, []);
 
   useEffect(() => {
-    const savedBgColor: any = localStorage.getItem("parentBgcolor");
+    const savedBgColor: any = localStorage.getItem("allBgcolor");
     if (savedBgColor) {
       setParentBgColor(savedBgColor);
     }
@@ -111,22 +105,22 @@ export default function Home(): ReactElement<Element> {
     };
   }, [clicked]);
 
-  function search(event: any) {
-    event.preventDefault();
-    if (searchTerm) {
-      const filteredTasks = allTasks.filter((task: any) =>
-        task.text.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setInfo(filteredTasks);
-    } else {
-      setInfo(allTasks);
-    }
-  }
-
   function handleColorClick(event: any) {
     const selectedColor: any = event.target.style.backgroundColor;
     setParentBgColor(selectedColor);
-    localStorage.setItem("parentBgcolor", selectedColor);
+    localStorage.setItem("allBgcolor", selectedColor);
+  }
+
+  function search(event: any) {
+    event?.preventDefault();
+    if (searchTerm) {
+      const filterdTasks = allTasks.filter((task: any) =>
+        task.text.toLocaleLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setInfo(filterdTasks);
+    } else {
+      setInfo(allTasks);
+    }
   }
   function handleSearchChange(event: any) {
     setSearchTerm(event.target.value);
@@ -137,13 +131,12 @@ export default function Home(): ReactElement<Element> {
       style={{ backgroundColor: parentBgcolor }}
     >
       <div className="flex  justify-between items-center m-2 relative ">
-        <div className="">
-          <h1 className=" date text-[2rem]">My Day</h1>
-          <p className="date font text-[1.2rem] font-[500]">{`${FormatDate(
-            new Date()
-          )}`}</p>
+        <div className="flex  items-center">
+          <p className="date font text-[1.5rem] font-[500]">
+            <PiInfinityBold className="mr-3 text-[crimson]" />
+          </p>
+          <h1 className=" date text-[2rem]">All</h1>
         </div>
-
         <div className="flex justify-center items-center ">
           <div className="flex items-center p-[7px]  mt-4   rounded-[10px] m-1  bg-[#252222] mb-2 mbr-2">
             <form onSubmit={search} className="flex items-center ">
@@ -158,7 +151,7 @@ export default function Home(): ReactElement<Element> {
             </form>
           </div>
 
-          <div className="threedot text-[1.5rem] cursor-pointer p-2 border rounded-md  ml-4">
+          <div className="threedot text-[1.5rem] cursor-pointer p-2 border rounded-md ml-4">
             <div>
               <PiDotsThreeOutline />
             </div>
@@ -170,8 +163,8 @@ export default function Home(): ReactElement<Element> {
                   </div>
                   <div className="grid grid-cols-4 gap-3  m-1 p-6  ">
                     <div
-                      className="w-[3rem] h-[3rem]  hover:border-[3px] rounded-md  color-div"
-                      style={{ backgroundColor: "#de4242" }}
+                      className="w-[3rem] h-[3rem]  hover:border-[3px] rounded-md  color-div "
+                      style={{ backgroundColor: "#944343" }}
                     ></div>
                     <div
                       className="w-[3rem] h-[3rem]  hover:border-[3px] bg-[#b1b14c] rounded-md  color-div"
